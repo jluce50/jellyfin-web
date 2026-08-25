@@ -516,6 +516,19 @@ export class UserSettings {
     }
 
     /**
+     * Get or set whether resumable episodes should be included in next up.
+     * @param {boolean|undefined} [val] - If resumable episodes should be included in next up.
+     * @returns {boolean} Resumable episodes in next up state.
+     */
+    enableResumableInNextUp(val) {
+        if (val !== undefined) {
+            return this.set('enableResumableInNextUp', val.toString(), false);
+        }
+
+        return toBoolean(this.get('enableResumableInNextUp', false), false);
+    }
+
+    /**
      * Get or set rewatching in next up.
      * @param {boolean|undefined} [val] - If rewatching items should be included in next up.
      * @returns {boolean} Rewatching in next up state.
@@ -708,6 +721,7 @@ export const backdropScreensaverInterval = currentSettings.backdropScreensaverIn
 export const screensaverTime = currentSettings.screensaverTime.bind(currentSettings);
 export const libraryPageSize = currentSettings.libraryPageSize.bind(currentSettings);
 export const maxDaysForNextUp = currentSettings.maxDaysForNextUp.bind(currentSettings);
+export const enableResumableInNextUp = currentSettings.enableResumableInNextUp.bind(currentSettings);
 export const enableRewatchingInNextUp = currentSettings.enableRewatchingInNextUp.bind(currentSettings);
 export const soundEffects = currentSettings.soundEffects.bind(currentSettings);
 export const loadQuerySettings = currentSettings.loadQuerySettings.bind(currentSettings);

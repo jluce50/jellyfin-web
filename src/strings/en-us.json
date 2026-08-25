@@ -300,6 +300,8 @@
     "EnableCardLayout": "Display visual CardBox",
     "EnableRewatchingNextUp": "Enable Rewatching in Next Up",
     "EnableRewatchingNextUpHelp": "Enable showing already watched episodes in 'Next Up' sections.",
+    "EnableResumableNextUp": "Include in-progress episodes in Next Up",
+    "EnableResumableNextUpHelp": "Keep partially watched episodes in Next Up until they are marked as watched.",
     "EnableQuickConnect": "Enable Quick Connect on this server",
     "EnableSmoothScroll": "Enable smooth scroll",
     "EnableStreamLooping": "Auto-loop live streams",
