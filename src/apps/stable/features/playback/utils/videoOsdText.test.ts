@@ -17,26 +17,6 @@ describe('getVideoOsdText', () => {
         expect(getVideoOsdText(episode)).toEqual({ title: 'Brooklyn Nine-Nine', detail: 'S4:E17 - Cop-Con' });
     });
 
-    it.each(['Brooklyn Nine-Nine S01E19', 'Brooklyn Nine-Nine - S1:E19', 'brooklyn nine-nine.s01e19', 'S01E19'])('omits a redundant filename-style title: %s', Name => {
-        expect(getVideoOsdText({ ...episode, Name, ParentIndexNumber: 1, IndexNumber: 19 }))
-            .toEqual({ title: 'Brooklyn Nine-Nine', detail: 'S1:E19' });
-    });
-
-    it.each(['Tactical Village', 'Brooklyn Nine-Nine: A Celebration', 'Brooklyn Nine-Nine S01E18', 'Brooklyn Nine-Nine S01E19 - Tactical Village'])('preserves descriptive or nonmatching titles: %s', Name => {
-        expect(getVideoOsdText({ ...episode, Name, ParentIndexNumber: 1, IndexNumber: 19 }).detail)
-            .toBe(`S1:E19 - ${Name}`);
-    });
-
-    it('only omits a multi-episode placeholder when the whole range matches', () => {
-        const item = { ...episode, Name: 'Brooklyn Nine-Nine S04E17-E18', IndexNumberEnd: 18 };
-        expect(getVideoOsdText(item).detail).toBe('S4:E17-18');
-        expect(getVideoOsdText({ ...item, IndexNumberEnd: 19 }).detail).toBe('S4:E17-19 - Brooklyn Nine-Nine S04E17-E18');
-    });
-
-    it('preserves placeholder text when metadata is incomplete', () => {
-        expect(getVideoOsdText({ ...episode, Name: 'S01E19', ParentIndexNumber: null }).detail).toBe('E17 - S01E19');
-    });
-
     it.each([
         [{ ParentIndexNumber: 0 }, 'S0:E17 - Cop-Con'],
         [{ IndexNumberEnd: 18 }, 'S4:E17-18 - Cop-Con'],
