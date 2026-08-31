@@ -218,6 +218,19 @@ export class UserSettings {
     }
 
     /**
+     * Get or set whether titles are shown above the video progress bar.
+     * @param {boolean|undefined} [val] - Whether to show the title.
+     * @returns {boolean} Video OSD title state.
+     */
+    showVideoOsdTitle(val) {
+        if (val !== undefined) {
+            return this.set('showVideoOsdTitle', val.toString());
+        }
+
+        return toBoolean(this.get('showVideoOsdTitle'), false);
+    }
+
+    /**
      * Get or set 'Video Remaining/Total Time' state.
      * @param {boolean|undefined} val - Flag to enable 'Video Remaining/Total Time' or undefined.
      * @return {boolean} 'Video Remaining/Total Time' state.
@@ -701,6 +714,7 @@ export const limitSegmentLength = currentSettings.limitSegmentLength.bind(curren
 export const enableCinemaMode = currentSettings.enableCinemaMode.bind(currentSettings);
 export const selectAudioNormalization = currentSettings.selectAudioNormalization.bind(currentSettings);
 export const enableNextVideoInfoOverlay = currentSettings.enableNextVideoInfoOverlay.bind(currentSettings);
+export const showVideoOsdTitle = currentSettings.showVideoOsdTitle.bind(currentSettings);
 export const enableVideoRemainingTime = currentSettings.enableVideoRemainingTime.bind(currentSettings);
 export const enableThemeSongs = currentSettings.enableThemeSongs.bind(currentSettings);
 export const enableThemeVideos = currentSettings.enableThemeVideos.bind(currentSettings);
