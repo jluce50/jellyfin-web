@@ -218,6 +218,19 @@ export class UserSettings {
     }
 
     /**
+     * Get or set whether titles are shown above the video progress bar.
+     * @param {boolean|undefined} [val] - Whether to show the title.
+     * @returns {boolean} Video OSD title state.
+     */
+    showVideoOsdTitle(val) {
+        if (val !== undefined) {
+            return this.set('showVideoOsdTitle', val.toString());
+        }
+
+        return toBoolean(this.get('showVideoOsdTitle'), false);
+    }
+
+    /**
      * Get or set 'Video Remaining/Total Time' state.
      * @param {boolean|undefined} val - Flag to enable 'Video Remaining/Total Time' or undefined.
      * @return {boolean} 'Video Remaining/Total Time' state.
@@ -516,6 +529,19 @@ export class UserSettings {
     }
 
     /**
+     * Get or set whether resumable episodes should be included in next up.
+     * @param {boolean|undefined} [val] - If resumable episodes should be included in next up.
+     * @returns {boolean} Resumable episodes in next up state.
+     */
+    enableResumableInNextUp(val) {
+        if (val !== undefined) {
+            return this.set('enableResumableInNextUp', val.toString(), false);
+        }
+
+        return toBoolean(this.get('enableResumableInNextUp', false), false);
+    }
+
+    /**
      * Get or set rewatching in next up.
      * @param {boolean|undefined} [val] - If rewatching items should be included in next up.
      * @returns {boolean} Rewatching in next up state.
@@ -688,6 +714,7 @@ export const limitSegmentLength = currentSettings.limitSegmentLength.bind(curren
 export const enableCinemaMode = currentSettings.enableCinemaMode.bind(currentSettings);
 export const selectAudioNormalization = currentSettings.selectAudioNormalization.bind(currentSettings);
 export const enableNextVideoInfoOverlay = currentSettings.enableNextVideoInfoOverlay.bind(currentSettings);
+export const showVideoOsdTitle = currentSettings.showVideoOsdTitle.bind(currentSettings);
 export const enableVideoRemainingTime = currentSettings.enableVideoRemainingTime.bind(currentSettings);
 export const enableThemeSongs = currentSettings.enableThemeSongs.bind(currentSettings);
 export const enableThemeVideos = currentSettings.enableThemeVideos.bind(currentSettings);
@@ -708,6 +735,7 @@ export const backdropScreensaverInterval = currentSettings.backdropScreensaverIn
 export const screensaverTime = currentSettings.screensaverTime.bind(currentSettings);
 export const libraryPageSize = currentSettings.libraryPageSize.bind(currentSettings);
 export const maxDaysForNextUp = currentSettings.maxDaysForNextUp.bind(currentSettings);
+export const enableResumableInNextUp = currentSettings.enableResumableInNextUp.bind(currentSettings);
 export const enableRewatchingInNextUp = currentSettings.enableRewatchingInNextUp.bind(currentSettings);
 export const soundEffects = currentSettings.soundEffects.bind(currentSettings);
 export const loadQuerySettings = currentSettings.loadQuerySettings.bind(currentSettings);

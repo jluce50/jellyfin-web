@@ -132,6 +132,7 @@ function loadForm(context, user, userSettings) {
     context.querySelector('#txtLibraryPageSize').value = userSettings.libraryPageSize();
 
     context.querySelector('#txtMaxDaysForNextUp').value = userSettings.maxDaysForNextUp();
+    context.querySelector('#chkResumableNextUp').checked = userSettings.enableResumableInNextUp();
     context.querySelector('#chkRewatchingNextUp').checked = userSettings.enableRewatchingInNextUp();
     context.querySelector('#chkUseEpisodeImagesInNextUp').checked = userSettings.useEpisodeImagesInNextUpAndResume();
 
@@ -162,6 +163,7 @@ function saveUser(context, user, userSettingsInstance, apiClient) {
     userSettingsInstance.libraryPageSize(context.querySelector('#txtLibraryPageSize').value);
 
     userSettingsInstance.maxDaysForNextUp(context.querySelector('#txtMaxDaysForNextUp').value);
+    userSettingsInstance.enableResumableInNextUp(context.querySelector('#chkResumableNextUp').checked);
     userSettingsInstance.enableRewatchingInNextUp(context.querySelector('#chkRewatchingNextUp').checked);
     userSettingsInstance.useEpisodeImagesInNextUpAndResume(context.querySelector('#chkUseEpisodeImagesInNextUp').checked);
 

@@ -1,6 +1,7 @@
 import escapeHtml from 'escape-html';
 
 import { PlayerEvent } from 'apps/stable/features/playback/constants/playerEvent';
+import { getVideoOsdText } from 'apps/stable/features/playback/utils/videoOsdText';
 import { AppFeature } from 'constants/appFeature';
 import { TICKS_PER_MINUTE, TICKS_PER_SECOND } from 'constants/time';
 import { EventType } from 'constants/eventType';
@@ -198,8 +199,8 @@ export default function (view) {
             btnRewind.disabled = true;
             view.querySelector('.btnSubtitles').classList.add('hide');
             view.querySelector('.btnAudio').classList.add('hide');
-            view.querySelector('.osdTitle').innerHTML = '';
-            view.querySelector('.osdMediaInfo').innerHTML = '';
+            setOsdTitle(null);
+            view.querySelector('.osdSecondaryMediaInfo').innerHTML = '';
             return;
         }
 
@@ -233,7 +234,18 @@ export default function (view) {
         }
     }
 
+    function setOsdTitle(item) {
+        const { title, detail } = getVideoOsdText(userSettings.showVideoOsdTitle() ? item : null);
+        view.querySelector('.osdTitleName').textContent = title;
+        const detailElement = view.querySelector('.osdTitleDetail');
+        detailElement.textContent = detail;
+        detailElement.classList.toggle('hide', !detail);
+        view.querySelector('.osdTitle').classList.toggle('hide', !title);
+    }
+
     function setTitle(item, parentName) {
+        setOsdTitle(item);
+
         let itemName = itemHelper.getDisplayName(item, {
             includeParentInfo: item.Type !== 'Program',
             includeIndexNumber: item.Type !== 'Program'
