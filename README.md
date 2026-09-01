@@ -33,6 +33,17 @@
 
 Jellyfin Web is the frontend used for most of the clients available for end users, such as desktop browsers, Android, and iOS. We welcome all contributions and pull requests! If you have a larger feature in mind please open an issue so we can discuss the implementation before you start. Translations can be improved very easily from our <a href="https://translate.jellyfin.org/projects/jellyfin/jellyfin-web">Weblate</a> instance. Look through the following graphic to see if your native language could use some work!
 
+## Local fork notes
+
+This is a personal fork of [Jellyfin Web](https://github.com/jellyfin/jellyfin-web) used to build and maintain a small number of household-specific web-client customizations. It is based on Jellyfin Web `10.11.11` and is not an official Jellyfin distribution.
+
+The currently maintained local changes are optional, per-user playback features that default to off:
+
+- **Include in-progress episodes in Next Up** keeps partially watched episodes eligible for the Next Up list until they are marked watched.
+- **Show title above the video progress bar** displays contextual title information in the playback OSD for movies and episodic content.
+
+This fork is deployed only for the local installation. It keeps Jellyfin's normal behavior by default and preserves a rollback path for local changes. Household-specific deployment records, related CSS and injected customizations, compatibility notes, and operational documentation live in a separate private workspace rather than in this upstream-derived repository.
+
 <a href="https://translate.jellyfin.org/engage/jellyfin/?utm_source=widget">
 <img src="https://translate.jellyfin.org/widgets/jellyfin/-/jellyfin-web/multi-auto.svg" alt="Detailed Translation Status"/>
 </a>
