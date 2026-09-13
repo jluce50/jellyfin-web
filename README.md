@@ -44,10 +44,6 @@ The currently maintained local changes are optional, per-user playback features 
 
 This fork is deployed only for the local installation. It keeps Jellyfin's normal behavior by default and preserves a rollback path for local changes. Household-specific deployment records, related CSS and injected customizations, compatibility notes, and operational documentation live in a separate private workspace rather than in this upstream-derived repository.
 
-<a href="https://translate.jellyfin.org/engage/jellyfin/?utm_source=widget">
-<img src="https://translate.jellyfin.org/widgets/jellyfin/-/jellyfin-web/multi-auto.svg" alt="Detailed Translation Status"/>
-</a>
-
 ## Build Process
 
 ### Dependencies
