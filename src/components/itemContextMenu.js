@@ -10,6 +10,7 @@ import { appHost } from './apphost';
 import { appRouter } from './router/appRouter';
 import itemHelper, { canEditPlaylist } from './itemHelper';
 import { playbackManager } from './playback/playbackmanager';
+import { canScanFiles, getScanFilesLabel, scanFiles } from './scanFiles';
 import toast from './toast/toast';
 import * as userSettings from '../scripts/settings/userSettings';
 import { AppFeature } from 'constants/appFeature';
@@ -297,6 +298,14 @@ export async function getCommands(options) {
     }
 
     if (itemHelper.canRefreshMetadata(item, user)) {
+        if (canScanFiles(item, user)) {
+            commands.push({
+                name: globalize.translate(getScanFilesLabel(item)),
+                id: 'scanfiles',
+                icon: 'refresh'
+            });
+        }
+
         commands.push({
             name: globalize.translate('RefreshMetadata'),
             id: 'refresh',
@@ -536,6 +545,9 @@ function executeCommand(item, id, options) {
             case 'refresh':
                 refresh(apiClient, item);
                 getResolveFunction(resolve, id)();
+                break;
+            case 'scanfiles':
+                scanFiles(apiClient, item).then(getResolveFunction(resolve, id), reject);
                 break;
             case 'open':
                 appRouter.showItem(item);

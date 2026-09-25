@@ -32,6 +32,7 @@ export function loadLibraryTiles(
             overlayText: false,
             lazy: true,
             transition: false,
+            overlayMoreButton: true,
             allowBottomPadding: !enableOverflow
         });
 
