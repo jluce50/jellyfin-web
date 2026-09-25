@@ -48,19 +48,18 @@ const defaultComicsPlayerSettings = {
 
 const resumableNextUpPreference = 'enableResumableInNextUp';
 
-async function migrateResumableNextUpPreference(apiClient, displayPrefs, userId) {
+async function initializeResumableNextUpPreference(apiClient, displayPrefs, userId) {
     const serverValue = displayPrefs.CustomPrefs[resumableNextUpPreference];
-    const legacyValue = appSettings.get(resumableNextUpPreference, userId);
 
-    // A server value is authoritative. Only migrate the legacy opt-in because
-    // false is still the default and should not overwrite another client's choice.
-    if (serverValue == null && legacyValue === 'true') {
-        displayPrefs.CustomPrefs[resumableNextUpPreference] = legacyValue;
+    // Existing server values remain authoritative. Users without one are opted
+    // in on first load, including users created before this preference existed.
+    if (serverValue == null) {
+        displayPrefs.CustomPrefs[resumableNextUpPreference] = 'true';
 
         try {
             await apiClient.updateDisplayPreferences('usersettings', displayPrefs, userId, 'emby');
         } catch {
-            // Keep the legacy opt-in for this session and retry on the next load.
+            // Keep the default enabled for this session and retry on the next load.
         }
     }
 }
@@ -89,7 +88,7 @@ export class UserSettings {
         return apiClient.getDisplayPreferences('usersettings', userId, 'emby').then(async function (result) {
             result.CustomPrefs = result.CustomPrefs || {};
             self.displayPrefs = result;
-            await migrateResumableNextUpPreference(apiClient, result, userId);
+            await initializeResumableNextUpPreference(apiClient, result, userId);
         });
     }
 
@@ -558,7 +557,7 @@ export class UserSettings {
             return this.set(resumableNextUpPreference, val.toString());
         }
 
-        return toBoolean(this.get(resumableNextUpPreference), false);
+        return toBoolean(this.get(resumableNextUpPreference), true);
     }
 
     /**

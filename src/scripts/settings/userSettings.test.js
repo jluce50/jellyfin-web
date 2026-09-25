@@ -31,17 +31,22 @@ describe('enableResumableInNextUp', () => {
         vi.useRealTimers();
     });
 
-    test('defaults off when neither the server nor the client has a value', async () => {
+    test('enables and persists the preference when the server has no value', async () => {
         const settings = new UserSettings();
         const apiClient = createApiClient();
 
         await settings.setUserInfo('user-1', apiClient);
 
-        expect(settings.enableResumableInNextUp()).toBe(false);
-        expect(apiClient.updateDisplayPreferences).not.toHaveBeenCalled();
+        expect(settings.enableResumableInNextUp()).toBe(true);
+        expect(apiClient.updateDisplayPreferences).toHaveBeenCalledWith(
+            'usersettings',
+            { CustomPrefs: { [preferenceName]: 'true' } },
+            'user-1',
+            'emby'
+        );
     });
 
-    test('migrates a legacy local opt-in when the server has no value', async () => {
+    test('keeps a legacy local opt-in enabled when the server has no value', async () => {
         appSettings.get.mockReturnValue('true');
         const settings = new UserSettings();
         const apiClient = createApiClient();
@@ -57,15 +62,20 @@ describe('enableResumableInNextUp', () => {
         );
     });
 
-    test('does not migrate a legacy local false value', async () => {
+    test('enables an existing user whose legacy local value is false', async () => {
         appSettings.get.mockReturnValue('false');
         const settings = new UserSettings();
         const apiClient = createApiClient();
 
         await settings.setUserInfo('user-1', apiClient);
 
-        expect(settings.enableResumableInNextUp()).toBe(false);
-        expect(apiClient.updateDisplayPreferences).not.toHaveBeenCalled();
+        expect(settings.enableResumableInNextUp()).toBe(true);
+        expect(apiClient.updateDisplayPreferences).toHaveBeenCalledWith(
+            'usersettings',
+            { CustomPrefs: { [preferenceName]: 'true' } },
+            'user-1',
+            'emby'
+        );
     });
 
     test.each([
@@ -82,8 +92,7 @@ describe('enableResumableInNextUp', () => {
         expect(apiClient.updateDisplayPreferences).not.toHaveBeenCalled();
     });
 
-    test('keeps the legacy opt-in for the session when migration cannot be saved', async () => {
-        appSettings.get.mockReturnValue('true');
+    test('keeps the default enabled for the session when initialization cannot be saved', async () => {
         const settings = new UserSettings();
         const apiClient = createApiClient();
         apiClient.updateDisplayPreferences.mockRejectedValue(new Error('request failed'));
