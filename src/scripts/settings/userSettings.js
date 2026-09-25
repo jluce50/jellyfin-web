@@ -46,6 +46,25 @@ const defaultComicsPlayerSettings = {
     pagesPerView: 1
 };
 
+const resumableNextUpPreference = 'enableResumableInNextUp';
+
+async function migrateResumableNextUpPreference(apiClient, displayPrefs, userId) {
+    const serverValue = displayPrefs.CustomPrefs[resumableNextUpPreference];
+    const legacyValue = appSettings.get(resumableNextUpPreference, userId);
+
+    // A server value is authoritative. Only migrate the legacy opt-in because
+    // false is still the default and should not overwrite another client's choice.
+    if (serverValue == null && legacyValue === 'true') {
+        displayPrefs.CustomPrefs[resumableNextUpPreference] = legacyValue;
+
+        try {
+            await apiClient.updateDisplayPreferences('usersettings', displayPrefs, userId, 'emby');
+        } catch {
+            // Keep the legacy opt-in for this session and retry on the next load.
+        }
+    }
+}
+
 export class UserSettings {
     /**
      * Bind UserSettings instance to user.
@@ -67,9 +86,10 @@ export class UserSettings {
 
         const self = this;
 
-        return apiClient.getDisplayPreferences('usersettings', userId, 'emby').then(function (result) {
+        return apiClient.getDisplayPreferences('usersettings', userId, 'emby').then(async function (result) {
             result.CustomPrefs = result.CustomPrefs || {};
             self.displayPrefs = result;
+            await migrateResumableNextUpPreference(apiClient, result, userId);
         });
     }
 
@@ -535,10 +555,10 @@ export class UserSettings {
      */
     enableResumableInNextUp(val) {
         if (val !== undefined) {
-            return this.set('enableResumableInNextUp', val.toString(), false);
+            return this.set(resumableNextUpPreference, val.toString());
         }
 
-        return toBoolean(this.get('enableResumableInNextUp', false), false);
+        return toBoolean(this.get(resumableNextUpPreference), false);
     }
 
     /**
