@@ -1,5 +1,8 @@
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
+
 import globalize from '../lib/globalize';
 import serverNotifications from '../scripts/serverNotifications';
+import { toApi } from '../utils/jellyfin-apiclient/compat.ts';
 import Events from '../utils/events.ts';
 
 import toast from './toast/toast';
@@ -7,6 +10,7 @@ import toast from './toast/toast';
 const scanCompletionTimeoutMs = 12 * 60 * 60 * 1000;
 const scanPollIntervalMs = 2 * 1000;
 const scanNoProgressGraceMs = 8 * 1000;
+const scanNoProgressTimeoutMs = 2 * 60 * 1000;
 const scanIdleConfirmations = 2;
 const supportedLibraryTypes = new Set([ 'homevideos', 'movies', 'musicvideos', 'tvshows' ]);
 const pendingScans = new Map();
@@ -31,6 +35,7 @@ function removePendingScan(key) {
     const pendingScan = pendingScans.get(key);
     if (pendingScan) {
         clearTimeout(pendingScan.pollTimeout);
+        clearTimeout(pendingScan.noProgressTimeout);
         clearTimeout(pendingScan.timeout);
         pendingScans.delete(key);
     }
@@ -94,7 +99,7 @@ function scheduleCompletionPoll(apiClient, itemId, key) {
             if (isActive) {
                 currentScan.sawProgress = true;
                 currentScan.idleChecks = 0;
-            } else if (currentScan.sawProgress || Date.now() - currentScan.startedAt >= scanNoProgressGraceMs) {
+            } else if (currentScan.sawProgress || currentScan.allowIdleCompletion && Date.now() - currentScan.startedAt >= scanNoProgressGraceMs) {
                 currentScan.idleChecks++;
                 if (currentScan.sawProgress || currentScan.idleChecks >= scanIdleConfirmations) {
                     Events.trigger(serverNotifications, 'RefreshProgress', [
@@ -114,7 +119,7 @@ function scheduleCompletionPoll(apiClient, itemId, key) {
     }, scanPollIntervalMs);
 }
 
-function trackScanCompletion(apiClient, itemId) {
+function trackScanCompletion(apiClient, itemId, allowIdleCompletion) {
     const key = getScanKey(apiClient, itemId);
     removePendingScan(key);
 
@@ -125,14 +130,48 @@ function trackScanCompletion(apiClient, itemId) {
 
     pendingScans.set(key, {
         acknowledged: false,
+        allowIdleCompletion,
         completed: false,
         idleChecks: 0,
+        noProgressTimeout: allowIdleCompletion ? null : setTimeout(() => {
+            const pendingScan = pendingScans.get(key);
+            if (pendingScan && !pendingScan.sawProgress) {
+                removePendingScan(key);
+            }
+        }, scanNoProgressTimeoutMs),
         pollTimeout: null,
         sawProgress: false,
         startedAt: Date.now(),
         timeout: setTimeout(() => removePendingScan(key), scanCompletionTimeoutMs)
     });
     return key;
+}
+
+function normalizeItemId(itemId) {
+    return itemId?.replaceAll('-', '').toLowerCase();
+}
+
+async function reportLibraryPathsChanged(apiClient, item) {
+    // Jellyfin 10.11's item-refresh endpoint only queues metadata for the
+    // virtual collection folder. Report its physical roots to LibraryMonitor
+    // so the server actually enumerates new and changed files.
+    const virtualFolders = await apiClient.getVirtualFolders();
+    const itemId = normalizeItemId(item.Id);
+    const virtualFolder = virtualFolders.find(folder => normalizeItemId(folder.ItemId) === itemId);
+    const locations = virtualFolder?.Locations?.filter(Boolean) || [];
+
+    if (!locations.length) {
+        throw new Error(`No configured media paths found for library ${item.Id}`);
+    }
+
+    return getLibraryApi(toApi(apiClient)).postUpdatedMedia({
+        mediaUpdateInfoDto: {
+            Updates: locations.map(Path => ({
+                Path,
+                UpdateType: 'Modified'
+            }))
+        }
+    });
 }
 
 export function canScanFiles(item, user) {
@@ -153,13 +192,20 @@ export function getScanFilesLabel(item) {
 }
 
 export async function scanFiles(apiClient, item) {
-    const scanKey = trackScanCompletion(apiClient, item.Id);
+    const isLibrary = item.Type === 'CollectionFolder';
+    // A path-triggered library refresh is not guaranteed to publish progress
+    // against the virtual folder id, so idle alone must not imply completion.
+    const scanKey = trackScanCompletion(apiClient, item.Id, !isLibrary);
 
     try {
-        await apiClient.refreshItem(item.Id, {
-            ImageRefreshMode: 'Default',
-            MetadataRefreshMode: 'Default'
-        });
+        if (isLibrary) {
+            await reportLibraryPathsChanged(apiClient, item);
+        } else {
+            await apiClient.refreshItem(item.Id, {
+                ImageRefreshMode: 'Default',
+                MetadataRefreshMode: 'Default'
+            });
+        }
 
         const pendingScan = pendingScans.get(scanKey);
         if (pendingScan) {
