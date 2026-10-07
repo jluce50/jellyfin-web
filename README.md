@@ -37,16 +37,16 @@ Jellyfin Web is the frontend used for most of the clients available for end user
 
 This is a personal fork of [Jellyfin Web](https://github.com/jellyfin/jellyfin-web) used to build and maintain a small number of household-specific web-client customizations. It is based on Jellyfin Web `10.11.11` and is not an official Jellyfin distribution.
 
-The currently maintained local changes are optional, per-user playback features that default to off:
+The maintained local changes are:
 
-- **Include in-progress episodes in Next Up** keeps partially watched episodes eligible for the Next Up list until they are marked watched.
-- **Show title above the video progress bar** displays contextual title information in the playback OSD for movies and episodic content.
+- **Include in-progress episodes in Next Up** keeps partially watched episodes eligible until marked watched. It defaults on for users without a saved choice, persists in server-side user display preferences, and respects explicit opt-out.
+- **Show title above the video progress bar** is a default-off per-user contextual title option for movies and episodic playback.
+- **Targeted scan actions** report configured physical library paths for discovery and use item refresh for series/seasons. Library completion requires actual server progress.
+- **Conversational AI search** provides explicit AI mode on the standard search page, native verified library cards, read-only Seerr discoveries, themed feedback, and redacted diagnostics. A separately installed companion plugin controls access and research. [Final client implementation and compatibility](docs/local-ai-search.md).
 
-This fork is deployed only for the local installation. It keeps Jellyfin's normal behavior by default and preserves a rollback path for local changes. Household-specific deployment records, related CSS and injected customizations, compatibility notes, and operational documentation live in a separate private workspace rather than in this upstream-derived repository.
+This fork is deployed for a local installation and is not an official Jellyfin distribution. Ordinary search remains the default; AI research requires explicit enabled access and submission. Complete Web builds retain a rollback path. Host-specific deployment records, credentials, related CSS/injected customizations, and operations live in a separate private workspace.
 
-<a href="https://translate.jellyfin.org/engage/jellyfin/?utm_source=widget">
-<img src="https://translate.jellyfin.org/widgets/jellyfin/-/jellyfin-web/multi-auto.svg" alt="Detailed Translation Status"/>
-</a>
+Local documentation describes maintained behavior and verified compatibility; Git carries development history.
 
 ## Build Process
 

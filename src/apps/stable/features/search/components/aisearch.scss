@@ -1,0 +1,174 @@
+.luceAiSearch {
+    .luceAiSearch-intro,
+    .luceAiSearch-muted {
+        opacity: 0.75;
+        line-height: 1.5;
+    }
+
+    .luceAiSearch-form {
+        max-width: 75em;
+        margin: 1.75em 0;
+
+        .emby-input {
+            border-radius: 0.5em;
+        }
+    }
+
+    .luceAiSearch-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        margin-top: 0.75em;
+    }
+
+    .luceAiSearch-feedback {
+        margin: 1.5em 0 2em;
+        padding: 1.25em 1.5em;
+        border-radius: 0.75em;
+        border-inline-start: 3px solid #00a4dc;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+        line-height: 1.6;
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .luceAiSearch-feedback-error {
+        border-inline-start-color: #e57373;
+    }
+
+    .luceAiSearch-feedback-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        font-weight: 600;
+
+        .material-icons {
+            font-size: 1.25em;
+            color: #00a4dc;
+        }
+    }
+
+    .luceAiSearch-status {
+        margin: 0.5em 0;
+    }
+
+    .luceAiSearch-section {
+        margin-top: 2.5em;
+
+        > .sectionTitle {
+            font-size: 1.65em;
+            margin: 0 0 0.75em;
+        }
+    }
+
+    .luceAiSearch-library {
+        .verticalSection {
+            margin-top: 1.25em;
+        }
+
+        h3.sectionTitle {
+            font-size: 1.15em;
+            padding-inline: 0;
+            margin-bottom: 0.75em;
+        }
+    }
+
+    .luceAiSearch-discoveries {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2em 1.5em;
+        margin-top: 1.25em;
+    }
+
+    .luceAiSearch-discovery {
+        width: clamp(10em, 15vw, 16em);
+        max-width: 100%;
+        text-align: center;
+
+        h3 {
+            font-size: 1em;
+            line-height: 1.4;
+            margin: 0.75em 0 0.25em;
+        }
+
+        h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+    }
+
+    .luceAiSearch-poster {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 2 / 3;
+        overflow: hidden;
+        border-radius: 0.75em;
+        transition: transform 150ms ease, box-shadow 150ms ease;
+        color: inherit;
+        text-decoration: none;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .material-icons {
+            font-size: 4em;
+            opacity: 0.5;
+        }
+
+        &:hover,
+        &:focus-visible {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
+        }
+    }
+
+    .luceAiSearch-year,
+    .luceAiSearch-evidence {
+        font-size: 0.85em;
+        opacity: 0.7;
+        margin: 0.35em 0;
+    }
+
+    .luceAiSearch-request {
+        display: inline-block;
+        font-size: 0.8em;
+        margin-top: 0.75em;
+        text-decoration: none;
+    }
+
+    .luceAiSearch-details {
+        margin-top: 1em;
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            padding: 1em;
+            border-radius: 0.5em;
+            background: rgb(128 128 128 / 10%);
+            font-size: 0.85em;
+        }
+    }
+}
+
+@media (max-width: 40em) {
+    .luceAiSearch .luceAiSearch-discovery {
+        width: calc((100% - 1.5em) / 2);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .luceAiSearch .luceAiSearch-poster {
+        transition: none;
+    }
+}

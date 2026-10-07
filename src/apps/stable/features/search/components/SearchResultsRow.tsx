@@ -9,8 +9,8 @@ import 'elements/emby-itemscontainer/emby-itemscontainer';
 // There seems to be some compatibility issues here between
 // React and our legacy web components, so we need to inject
 // them as an html string for now =/
-const createScroller = ({ title = '' }) => ({
-    __html: `<h2 class="sectionTitle sectionTitle-cards focuscontainer-x padded-left padded-right">${title}</h2>
+const createScroller = ({ title = '', headingLevel = 2 }) => ({
+    __html: `<h${headingLevel} class="sectionTitle sectionTitle-cards focuscontainer-x padded-left padded-right">${title}</h${headingLevel}>
     <div is="emby-scroller" data-horizontal="true" data-centerfocus="card" class="padded-top-focusscale padded-bottom-focusscale">
     <div is="emby-itemscontainer" class="focuscontainer-x itemsContainer scrollSlider"></div>
 </div>`
@@ -20,9 +20,10 @@ interface SearchResultsRowProps {
     title?: string;
     items?: BaseItemDto[];
     cardOptions?: CardOptions;
+    headingLevel?: 2 | 3;
 }
 
-const SearchResultsRow: FC<SearchResultsRowProps> = ({ title, items = [], cardOptions = {} }) => {
+const SearchResultsRow: FC<SearchResultsRowProps> = ({ title, items = [], cardOptions = {}, headingLevel = 2 }) => {
     const element = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -36,7 +37,7 @@ const SearchResultsRow: FC<SearchResultsRowProps> = ({ title, items = [], cardOp
         <div
             ref={element}
             className='verticalSection'
-            dangerouslySetInnerHTML={createScroller({ title })}
+            dangerouslySetInnerHTML={createScroller({ title, headingLevel })}
         />
     );
 };
